@@ -1,0 +1,35 @@
+1) Scenario  
+Write test cases verify all menu bar
+
+//------------------- EXTEND ------------------------
+Write new method open, verify text
+Use 2 these methods to verify all menu bar
+a. open(String fileName, String sheetName, String data_row, String[][] table)
+
+1) Support Functions:
+	public static void EXAM_SELEENIUM_DEMO_EXTEND() throws Throwable {
+		support.launch("chrome");
+		
+		String[][] table1 = {
+				{"Col_Index"}
+				,{"1"}
+		};
+		String data_row_url = "0";	
+		support.open("Elements.xlsx", "HomePage", data_row_url, table1);
+		
+		String[][] table3 = {
+				{"Col_Index"}
+				,{"1"}
+		};
+		String data_row = "3";	
+		support.verify_element_with_text(table3, data_row);
+		support.closePage();
+	}
+
+data_row = "3" -> PASSED
+data_row = "4" -> FAILED
+data_row = "5" -> FAILED
+
+
+2) Use this "open" method to print all URLs of "URL_List" sheet
+
