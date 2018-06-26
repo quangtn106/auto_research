@@ -439,16 +439,14 @@ public class OperationHelper {
 	
 	
 	
-	
-	
-	
 	public String getURL_FromExcel1(String fileName, String sheetName, String data_row, String[][] table) throws Throwable {
 		String url = "";
 		openFileExcel(fileName, sheetName);
+//		int row_table_default = 1;
 		int rowIndex = Integer.parseInt(data_row);
-		int row_excel_index = Integer.parseInt(table[rowIndex][0]);
+//		int row_excel_index = Integer.parseInt(table[rowIndex][0]);
 		int col_excel_index = Integer.parseInt(table[0][1]);
-		row = sheet.getRow(row_excel_index);
+		row = sheet.getRow(rowIndex);
 		cell = row.getCell(col_excel_index);
 		if (isCellEmpty(cell)) {
 			url = null;
