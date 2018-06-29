@@ -439,14 +439,14 @@ public class OperationHelper {
 	
 	
 	
-	public String getURL_FromExcel1(String fileName, String sheetName, String data_row, String[][] table) throws Throwable {
+	public String getURL_FromExcel(String[][] table, String row_index) throws Throwable {
 		String url = "";
+		fileName = "Elements.xlsx";
+		sheetName = "Login_Page";
 		openFileExcel(fileName, sheetName);
-//		int row_table_default = 1;
-		int rowIndex = Integer.parseInt(data_row);
-//		int row_excel_index = Integer.parseInt(table[rowIndex][0]);
-		int col_excel_index = Integer.parseInt(table[0][1]);
-		row = sheet.getRow(rowIndex);
+		int row_excel_index = Integer.parseInt(row_index);
+		int col_excel_index = Integer.parseInt(table[1][0]);
+		row = sheet.getRow(row_excel_index);
 		cell = row.getCell(col_excel_index);
 		if (isCellEmpty(cell)) {
 			url = null;
@@ -455,6 +455,12 @@ public class OperationHelper {
 			url = cell.getStringCellValue().trim().toString();
 		}
 		return url;
+	}
+	
+	public void openPage(String fileName, String sheetName, String[][] table, String row_index) throws Throwable {
+		String url = getURL_FromExcel(table, row_index);
+		driver.manage().window().maximize();
+		driver.get(url);
 	}
 	
 	
