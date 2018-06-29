@@ -39,6 +39,6 @@ public class StepsDefinations {
 				,{"1"}
 		};
 		String data_row_url = "0";
-		System.out.println(support.getURL_FromExcel1("Elements.xlsx", "Elements", data_row_url, table));
+		support.openPage("Elements.xlsx", "Login_Page", table, data_row_url);
 	}
 }
