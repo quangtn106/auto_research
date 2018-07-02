@@ -1,11 +1,12 @@
 package support.utils;
 
+import java.util.List;
 import java.io.FileInputStream;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -21,14 +22,12 @@ public class OperationHelper {
 	private WebDriver driver = null;
 	
 	private String filePath = "";
-	private String fileName = "";
-	private String sheetName = "";
 	private String sheetNameTest = "";
 	private FileInputStream file;
-	private XSSFWorkbook workbook;
-	private XSSFSheet sheet;
-	private XSSFRow row;
-	private XSSFCell cell;
+	private Workbook workbook;
+	private Sheet sheet;
+	private Row row;
+	private Cell cell;
 		
 	// ================QuangTN=================
 	/**
@@ -143,29 +142,7 @@ public class OperationHelper {
 		}
 		return cellType;
 	}
-		
-	/**
-	 * This function is get value from excel
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD getValue_FromExcel() function 
-	 * UPDATED DATE: 6/26/2018 
-	 * @param rowIndex
-	 * @param cellIndex
-	 * @return
-	 * @throws IOException
-	 */
-	public String getValue_FromExcel(int rowIndex, int cellIndex) throws Throwable {
-		String result = "";
-		fileName = "Elements.xlsx";
-		sheetName = "Elements";
-		openFileExcel(fileName, sheetName);
-		row = sheet.getRow(rowIndex);
-		cell = row.getCell(cellIndex);
-		result = cell.getStringCellValue().trim().toString();
-		return result;
-	}
-	
+
 	/**
 	 * This function is get text of the element
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
@@ -195,6 +172,16 @@ public class OperationHelper {
 	}
 	
 	/**
+	 * 
+	 * @param table
+	 * @throws Throwable
+	 */
+	public void sendKey(String[][] table) throws Throwable {
+		String value = getValue_fromExcel(table, "3");
+		getElement(table).sendKeys(value);
+	}
+	
+	/**
 	 * This function is get element with table as parameter
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
@@ -205,8 +192,8 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public WebElement getElement(String[][] table) throws Throwable {
-		String eName = getValue_FromExcel(table, "1");
-		String eLocator = getValue_FromExcel(table, "2");
+		String eName = getValue_fromExcel(table, "1");
+		String eLocator = getValue_fromExcel(table, "2");
 		WebElement e = getElement(eName, eLocator);
 		return e;
 	}
@@ -225,7 +212,7 @@ public class OperationHelper {
 		filePath = "\\src\\test\\resources\\DataIn\\";
 		String fileDir = System.getProperty("user.dir") + filePath + fileName;
 		file = new FileInputStream(fileDir);
-		workbook = new XSSFWorkbook(file);
+		workbook = WorkbookFactory.create(file);
 		sheet = workbook.getSheet(sheetName);
 	}
 	
@@ -233,14 +220,14 @@ public class OperationHelper {
 	 * This function is get value from excel
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
-	 * 		+ ADD getValue_FromExcel(String[][] table, String row_index) function 
+	 * 		+ ADD getValue_fromExcel(String[][] table, String row_index) function 
 	 * UPDATED DATE: 6/30/2018
 	 * @param table
 	 * @param row_index
 	 * @return value of cells
 	 * @throws Throwable
 	 */
-	public String getValue_FromExcel(String[][] table, String row_index) throws Throwable {
+	public String getValue_fromExcel(String[][] table, String row_index) throws Throwable {
 		String value = "";
 		int row_excel_index = Integer.parseInt(row_index);
 		int col_excel_index = Integer.parseInt(table[1][0]);
@@ -255,45 +242,110 @@ public class OperationHelper {
 		return value;
 	}
 	
+	/**
+	 * This function is open page with url get from excel
+	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
+	 * MODIFIED: 
+	 * 		+ ADD openPage(String fileName, String sheetName, String[][] table, String row_index) function 
+	 * UPDATED DATE: 7/1/2018
+	 * @param fileName
+	 * @param sheetName
+	 * @param table
+	 * @param row_index
+	 * @throws Throwable
+	 */
 	public void openPage(String fileName, String sheetName, String[][] table, String row_index) throws Throwable {
-		String url = getValue_FromExcel(table, row_index);
+		String url = getValue_fromExcel(table, row_index);
 		driver.manage().window().maximize();
 		driver.get(url);
+//		String currentURL = driver.getCurrentUrl();
 		System.out.println(url); //print string url
 	}
 	
-	public By getIndentifer(String[][] table) throws Throwable{
-		String eName = getValue_FromExcel(table, "1");
-		String eLocator = getValue_FromExcel(table, "2");
+	/**
+	 * This function is get identify of elements
+	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
+	 * MODIFIED: 
+	 * 		+ ADD getIndentifer(String[][] table) function 
+	 * UPDATED DATE: 7/1/2018
+	 * @param table
+	 * @return
+	 * @throws Throwable
+	 */
+	public By getIdentifer(String[][] table) throws Throwable{
+		String eName = getValue_fromExcel(table, "1");
+		String eLocator = getValue_fromExcel(table, "2");
 		if (eName.contains("-id")) {
 			return By.id(eLocator);
-		}
-		if (eName.contains("-xp")) {
+		} else if (eName.contains("-xp")) {
 			return By.xpath(eLocator);
-		}
-		if (eName.contains("-name")){
+		} else if (eName.contains("-name")){
 			return By.name(eLocator);
+		} else {
+			return null;
 		}
-		return null;
 	}
 	
+	/**
+	 * This function is wait for element visible
+	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
+	 * MODIFIED: 
+	 * 		+ ADD waitForElementVisible(String[][] table, int timeOut) function 
+	 * UPDATED DATE: 7/1/2018
+	 * @param table
+	 * @param timeOut
+	 * @throws Throwable
+	 */
 	public void waitForElementVisible(String[][] table, int timeOut) throws Throwable {
 		WebDriverWait wait = new WebDriverWait(driver, timeOut);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(getIndentifer(table)));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(getIdentifer(table)));
 	}
 	
+	/**
+	 * This function is verify element displayed
+	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
+	 * MODIFIED: 
+	 * 		+ ADD verifyElementDisplayed(String[][] table) function 
+	 * UPDATED DATE: 7/1/2018
+	 * @param table
+	 * @throws Throwable
+	 */
 	public void verifyElementDisplayed(String[][] table) throws Throwable {
 		WebElement e = getElement(table);
 		Assert.assertTrue(e.isDisplayed());
 	}
 
+	/**
+	 * This function is verify element with text
+	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
+	 * MODIFIED: 
+	 * 		+ ADD verifyElementWithText(String[][] table, String row_index) function 
+	 * UPDATED DATE: 7/1/2018
+	 * @param table
+	 * @param row_index
+	 * @throws Throwable
+	 */
 	public void verifyElementWithText(String[][] table, String row_index) throws Throwable {
-		String eData = getValue_FromExcel(table, row_index);
+		String eData = getValue_fromExcel(table, row_index);
 		String eText = getElement(table).getText();
 		verifyElementDisplayed(table);
 		Assert.assertEquals(eData, eText);
 	}
 	
+	public void selectListElement(String[][] table) throws Throwable {
+		WebElement select = getElement(table);
+		String value = getValue_fromExcel(table, "3");
+		List<WebElement> options = select.findElements(By.tagName("li"));
+		for(WebElement option1 : options) {
+			if(option1.getText().trim().contains(value)) {
+				option1.click();
+				break;
+			}
+		}
+	}
 	
-
+	public void waitForElementClickable(String[][] table, int timeOut) throws Throwable {
+		WebDriverWait wait = new WebDriverWait(driver, timeOut);
+		wait.until(ExpectedConditions.elementToBeClickable(getIdentifer(table)));
+	}
 }
