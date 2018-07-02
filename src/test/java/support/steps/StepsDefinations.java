@@ -1,44 +1,173 @@
 package support.steps;
 
+import org.junit.Test;
 import support.utils.OperationHelper;
 
 public class StepsDefinations {
 	private static String[][] table;
 
 	public static void main(String[] args) throws Throwable {
-		TC002();
-	}
-
-	private static void TC001() throws Throwable {
-		OperationHelper support = new OperationHelper();
-		support.launch("chrome");
-		table = new String[][] { 
-			{ "Row_Index", "Column_Index" }, 
-			{ "0", "1" } 
-		};
-		support.openPage(table);
-		Thread.sleep(2000); // just for test
-		table = new String[][] { 
-			{ "Row_Index", "Column_Index" }, 
-			{ "1", "1" } 
-		};
-		support.inputFromRow(table, "4");
-		table = new String[][] { 
-			{ "Row_Index", "Column_Index" }, 
-			{ "1", "2" } 
-		};
-		support.click(table);
-		Thread.sleep(3000);
-		support.close();
+		TC008();
 	}
 	
-	private static void TC002() throws Throwable {
+	//Verify menu Account
+	@Test
+	public void TC001() throws Throwable {
 		OperationHelper support = new OperationHelper();
-		table = new String[][] {
-				{"Col_Index"}
-				,{"1"}
+		support.openFileExcel("Elements.xlsx", "Login_Page");
+		support.launch("chrome");
+		table = new String[][] { 
+			{ "Col_Index" }, 
+			{ "1" } 
 		};
-		String data_row_url = "0";
-		support.openPage("Elements.xlsx", "Login_Page", table, data_row_url);
+		String dataRowUrl = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowUrl);
+		support.waitForElementVisible(table, 20);
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Verify menu Add Your Property
+	@Test
+	public void TC002() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		String dataRowUrl = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowUrl);
+		support.waitForElementVisible(table, 20);
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "2" }
+		};
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Verify menu My Lists
+	@Test
+	public void TC003() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		String dataRowURL = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowURL);
+		support.waitForElementVisible(table, 20);
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "3" }
+		};
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Verify menu My Trips
+	@Test
+	public void TC004() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		String dataRowURL = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowURL);
+		support.waitForElementVisible(table, 20);
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "4" }
+		};
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Verify menu Support
+	@Test
+	public void TC005() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		String dataRowURL = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowURL);
+		support.waitForElementVisible(table, 20);
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "5" }
+		};
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Verify menu LanguageES
+	@Test
+	public void TC006() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		String dataRowURL = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowURL);
+		support.waitForElementVisible(table, 20);
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "6" }
+		};
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Verify menu LanguageCH
+	@Test
+	public void TC007() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		String dataRowURL = "0";
+		support.openPage("Elements.xlsx", "Login_Page", table, dataRowURL);
+		support.waitForElementVisible(table, 20);
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "7" }
+		};
+		String dataRowData = "3";
+		support.verifyElementWithText(table, dataRowData);
+		support.closePage();
+	}
+	
+	//Sprint URLs in sheet URL_List
+	public static void TC008() throws Throwable {
+		OperationHelper support = new OperationHelper();
+		support.openFileExcel("Elements.xlsx", "Login_Page");
+		support.changeToSheet("URL_List");
+		support.launch("chrome");
+		table = new String[][] {
+			{ "Col_Index" },
+			{ "1" }
+		};
+		support.openPage("Elements.xlsx", "URL_List", table, "1");
+		support.closePage();
+		support.launch("chrome");
+		support.openPage("Elements.xlsx", "URL_List", table, "4");
+		support.closePage();
 	}
 }

@@ -1,23 +1,21 @@
 package support.utils;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OperationHelper {
 	private WebDriver driver = null;
@@ -27,7 +25,6 @@ public class OperationHelper {
 	private String sheetName = "";
 	private String sheetNameTest = "";
 	private FileInputStream file;
-	private FileOutputStream fileOut;
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 	private XSSFRow row;
@@ -71,8 +68,8 @@ public class OperationHelper {
 	 * 		+ ADD close() function 
 	 * UPDATED DATE: 6/23/2018 
 	 */
-	public void close() {
-		driver.close();
+	public void closePage() {
+		driver.quit();
 	}
 
 	/**
@@ -110,25 +107,6 @@ public class OperationHelper {
 	}
 	
 	/**
-	 * This function is open excel file
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD openFileExcel() function 
-	 * UPDATED DATE: 6/19/2018
-	 * @param filePath
-	 * @param fileName
-	 * @param sheetName
-	 * @throws Throwable
-	 */
-	public void openFileExcel(String fileName, String sheetName) throws Throwable {
-		filePath = "\\src\\test\\resources\\DataIn\\";
-		String fileDir = System.getProperty("user.dir") + filePath + fileName;
-		file = new FileInputStream(fileDir);
-		workbook = new XSSFWorkbook(file);
-		sheet = workbook.getSheet(sheetName);
-	}
-	
-	/**
 	 * This function is change sheet excel file
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
@@ -139,36 +117,7 @@ public class OperationHelper {
 	public void changeToSheet(String sheetName) {
 		sheetNameTest = sheetName;
 		sheet = workbook.getSheet(sheetNameTest);
-		System.out.println("Changed to sheet" + sheetNameTest);
-	}
-	
-	/**
-	 * This function is get a URL from excel file
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD getURL_FromExcel() function 
-	 * UPDATED DATE: 6/19/2018
-	 * @param table
-	 * @param row_index
-	 * @return String URL
-	 * @throws Throwable
-	 */
-	public String getURL_FromExcel(String[][] table, int row_index) throws Throwable {
-		String url = "";
-		fileName = "Elements.xlsx";
-		sheetName = "Elements";
-		openFileExcel(fileName, sheetName);
-		int row_excel_index = Integer.parseInt(table[row_index][0]);
-		int col_excel_index = Integer.parseInt(table[row_index][1]);
-		row = sheet.getRow(row_excel_index);
-		cell = row.getCell(col_excel_index);
-		if (isCellEmpty(cell)) {
-			url = null;
-			System.out.println("Cell is blank");
-		} else {
-			url = cell.getStringCellValue().trim().toString();
-		}
-		return url;
+		System.out.println("Changed to sheet " + sheetNameTest);
 	}
 	
 	/**
@@ -194,95 +143,6 @@ public class OperationHelper {
 		}
 		return cellType;
 	}
-	
-	/**
-	 * This function is open a URL from excel file
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD openPage() function 
-	 * UPDATED DATE: 6/19/2018
-	 * @param fileName
-	 * @param sheetName
-	 * @param table
-	 * @param row_index
-	 * @throws Throwable
-	 */
-	public void openPage(String fileName, String sheetName, String[][] table, String row_index) throws Throwable {
-		int dataRowIndex = Integer.parseInt(row_index);
-		String url = getURL_FromExcel(table, dataRowIndex);
-		driver.manage().window().maximize();
-		driver.get(url);
-	}
-	
-//	public void createExcelFile(String fileName, String sheetName) throws Throwable {
-//        workbook = new XSSFWorkbook(fileName);
-//        sheet = workbook.createSheet(sheetName);
-//		
-//	}
-	
-//	public void setValue_FromExcel(String fileName, String sheetName, String[][] table, String value) throws Throwable {
-//		String result = "";
-//		String before = cell.getStringCellValue().trim().toString();
-//		filePath = "\\src\\test\\resources\\DataIn\\";
-//		String fileDir = System.getProperty("user.dir") + filePath + fileName;
-//		openFileExcel(fileName, sheetName);
-//		changeToSheet(sheetName);
-//		int row_index = 0;
-//		int row_excel_index = Integer.parseInt(table[row_index][0]);
-//		int col_excel_index = Integer.parseInt(table[row_index][1]);
-//		row = sheet.getRow(row_excel_index);
-//		cell = row.getCell(col_excel_index);
-//		
-//		if(isCellEmpty(cell)) {
-////			fileOut = new FileOutputStream(fileDir);
-////			
-////	        fileOut.close();
-////			result = cell.setCellValue(value);
-//			cell = row.createCell(col_excel_index);
-//	        cell.setCellType(CellType.STRING);
-//	        cell.setCellValue(value);
-//	        fileOut = new FileOutputStream(fileDir);
-//	        workbook.write(fileOut);
-//		} else {
-//			result = before + value;
-//		}
-//	}
-	
-	/**
-	 * This function is scroll to bottom page
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD scrollToBottomPage() function 
-	 * UPDATED DATE: 6/23/2018 
-	 */
-	public void scrollToBottomPage() {
-		JavascriptExecutor js  = (JavascriptExecutor) driver;
-		js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
-	}
-	
-	/**
-	 * This function is scroll to top page
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD scrollToTopPage() function 
-	 * UPDATED DATE: 6/23/2018 
-	 */
-	public void scrollToTopPage() {
-		JavascriptExecutor js  = (JavascriptExecutor) driver;
-		js.executeScript("window.scrollTo(0, 0)");
-	}
-	
-	/**
-	 * This function is scroll to element in page
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD scrollToElement() function 
-	 * UPDATED DATE: 6/23/2018 
-	 */
-	public void scrollToElement(String eName, String eLocator) {
-		JavascriptExecutor js  = (JavascriptExecutor) driver;
-		js.executeScript("arguments[0].scrollIntoView();", getElement(eName, eLocator));
-	}
 		
 	/**
 	 * This function is get value from excel
@@ -304,44 +164,6 @@ public class OperationHelper {
 		cell = row.getCell(cellIndex);
 		result = cell.getStringCellValue().trim().toString();
 		return result;
-	}
-	
-	/**
-	 * This function is get element from table
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD getElement() function 
-	 * UPDATED DATE: 6/26/2018 
-	 * @param table
-	 * @return
-	 * @throws Throwable 
-	 */
-	public WebElement getElement(String[][] table) throws Throwable {
-		int row_table_default = 1; // Get row(1) of datatable
-		int row_excel_index_eName = Integer.parseInt(table[row_table_default][0]);
-		int col_excel_index_eName = Integer.parseInt(table[row_table_default][1]);
-		String eName = getValue_FromExcel(row_excel_index_eName, col_excel_index_eName);
-		String eLocator = getValue_FromExcel(row_excel_index_eName + 1, col_excel_index_eName);
-		WebElement e = getElement(eName, eLocator);
-		return e;
-	}
-	
-	/**
-	 * This function is open a page
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD openPage() function 
-	 * UPDATED DATE: 6/26/2018 
-	 * @param table
-	 * @throws Throwable
-	 */
-	public void openPage(String[][] table) throws Throwable {
-		int row_table_default = 1; // Get row(1) of datatable
-		int row_excel_index_eName = Integer.parseInt(table[row_table_default][0]);
-		int col_excel_index_eName = Integer.parseInt(table[row_table_default][1]);
-		String url = getValue_FromExcel(row_excel_index_eName, col_excel_index_eName);
-		driver.manage().window().maximize();
-		driver.get(url);
 	}
 	
 	/**
@@ -373,102 +195,104 @@ public class OperationHelper {
 	}
 	
 	/**
-	 * This function is input data
+	 * This function is get element with table as parameter
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
-	 * 		+ ADD input() function 
-	 * UPDATED DATE: 6/26/2018 
+	 * 		+ ADD getElement(String[][] table) function 
+	 * UPDATED DATE: 6/30/2018 
 	 * @param table
-	 * @param value
+	 * @return web elements
 	 * @throws Throwable
 	 */
-	public void input(String[][] table, String value) throws Throwable {
-		getElement(table).sendKeys(value);
+	public WebElement getElement(String[][] table) throws Throwable {
+		String eName = getValue_FromExcel(table, "1");
+		String eLocator = getValue_FromExcel(table, "2");
+		WebElement e = getElement(eName, eLocator);
+		return e;
 	}
 	
 	/**
-	 * This function is select drop down list
+	 * This function is open file excel with filename and sheetname as parameter
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
-	 * 		+ ADD selectDropDown() function 
-	 * UPDATED DATE: 6/26/2018  
-	 * @param table
-	 * @param type
-	 * @param value
+	 * 		+ ADD openFileExcel(String fileName, String sheetName) function 
+	 * UPDATED DATE: 6/30/2018 
+	 * @param fileName
+	 * @param sheetName
 	 * @throws Throwable
 	 */
-	public void selectDropDown(String[][] table, String type, String value) throws Throwable {
-		WebElement e = getElement(table);
-		Select ddl = new Select(e);
-		if(type.equalsIgnoreCase("text")) {
-			ddl.selectByVisibleText(value);
-		}
-		else if(type.equalsIgnoreCase("index")) {
-			ddl.selectByIndex(Integer.parseInt(value));
-		}
-		else if(type.equalsIgnoreCase("value")) {
-			ddl.selectByValue(value);
-		}
+	public void openFileExcel(String fileName, String sheetName) throws Throwable {
+		filePath = "\\src\\test\\resources\\DataIn\\";
+		String fileDir = System.getProperty("user.dir") + filePath + fileName;
+		file = new FileInputStream(fileDir);
+		workbook = new XSSFWorkbook(file);
+		sheet = workbook.getSheet(sheetName);
 	}
 	
 	/**
-	 * This function is input data from row
+	 * This function is get value from excel
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
-	 * 		+ ADD inputFromRow() function 
-	 * UPDATED DATE: 6/26/2018 
+	 * 		+ ADD getValue_FromExcel(String[][] table, String row_index) function 
+	 * UPDATED DATE: 6/30/2018
 	 * @param table
-	 * @param data_row_index
+	 * @param row_index
+	 * @return value of cells
 	 * @throws Throwable
 	 */
-	public void inputFromRow(String[][] table, String data_row_index) throws Throwable {
-		int row_table_default = 1; // Get row(1) of datatable
-		int row_excel_index_eName = Integer.parseInt(table[row_table_default][0]);
-		int col_excel_index_eName = Integer.parseInt(table[row_table_default][1]);
-		
-		data_row_index = getValue_FromExcel(row_excel_index_eName + 2, col_excel_index_eName);
-		getElement(table).sendKeys(data_row_index);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public String getURL_FromExcel(String[][] table, String row_index) throws Throwable {
-		String url = "";
-		fileName = "Elements.xlsx";
-		sheetName = "Login_Page";
-		openFileExcel(fileName, sheetName);
+	public String getValue_FromExcel(String[][] table, String row_index) throws Throwable {
+		String value = "";
 		int row_excel_index = Integer.parseInt(row_index);
 		int col_excel_index = Integer.parseInt(table[1][0]);
 		row = sheet.getRow(row_excel_index);
 		cell = row.getCell(col_excel_index);
 		if (isCellEmpty(cell)) {
-			url = null;
+			value = null;
 			System.out.println("Cell is blank");
 		} else {
-			url = cell.getStringCellValue().trim().toString();
+			value = cell.getStringCellValue().trim().toString();
 		}
-		return url;
+		return value;
 	}
 	
 	public void openPage(String fileName, String sheetName, String[][] table, String row_index) throws Throwable {
-		String url = getURL_FromExcel(table, row_index);
+		String url = getValue_FromExcel(table, row_index);
 		driver.manage().window().maximize();
 		driver.get(url);
+		System.out.println(url); //print string url
 	}
 	
+	public By getIndentifer(String[][] table) throws Throwable{
+		String eName = getValue_FromExcel(table, "1");
+		String eLocator = getValue_FromExcel(table, "2");
+		if (eName.contains("-id")) {
+			return By.id(eLocator);
+		}
+		if (eName.contains("-xp")) {
+			return By.xpath(eLocator);
+		}
+		if (eName.contains("-name")){
+			return By.name(eLocator);
+		}
+		return null;
+	}
 	
+	public void waitForElementVisible(String[][] table, int timeOut) throws Throwable {
+		WebDriverWait wait = new WebDriverWait(driver, timeOut);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(getIndentifer(table)));
+	}
 	
-	
-	
-	
-	
+	public void verifyElementDisplayed(String[][] table) throws Throwable {
+		WebElement e = getElement(table);
+		Assert.assertTrue(e.isDisplayed());
+	}
+
+	public void verifyElementWithText(String[][] table, String row_index) throws Throwable {
+		String eData = getValue_FromExcel(table, row_index);
+		String eText = getElement(table).getText();
+		verifyElementDisplayed(table);
+		Assert.assertEquals(eData, eText);
+	}
 	
 	
 
