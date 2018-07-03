@@ -28,6 +28,7 @@ public class OperationHelper {
 	private Sheet sheet;
 	private Row row;
 	private Cell cell;
+	private String daySelect = "";
 		
 	// ================QuangTN=================
 	/**
@@ -177,7 +178,7 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public void sendKey(String[][] table) throws Throwable {
-		String value = getValue_fromExcel(table, "3");
+		String value = getData_FromTable(table, "3");
 		getElement(table).sendKeys(value);
 	}
 	
@@ -192,8 +193,8 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public WebElement getElement(String[][] table) throws Throwable {
-		String eName = getValue_fromExcel(table, "1");
-		String eLocator = getValue_fromExcel(table, "2");
+		String eName = getData_FromTable(table, "1");
+		String eLocator = getData_FromTable(table, "2");
 		WebElement e = getElement(eName, eLocator);
 		return e;
 	}
@@ -220,19 +221,17 @@ public class OperationHelper {
 	 * This function is get value from excel
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
 	 * MODIFIED: 
-	 * 		+ ADD getValue_fromExcel(String[][] table, String row_index) function 
+	 * 		+ ADD getValue_FromExcel(String[][] table, String row_index) function 
 	 * UPDATED DATE: 6/30/2018
 	 * @param table
 	 * @param row_index
 	 * @return value of cells
 	 * @throws Throwable
 	 */
-	public String getValue_fromExcel(String[][] table, String row_index) throws Throwable {
+ 	public String getValue_FromExcel(int col_excel, int row_excel) throws Throwable {
 		String value = "";
-		int row_excel_index = Integer.parseInt(row_index);
-		int col_excel_index = Integer.parseInt(table[1][0]);
-		row = sheet.getRow(row_excel_index);
-		cell = row.getCell(col_excel_index);
+		row = sheet.getRow(row_excel);
+		cell = row.getCell(col_excel);
 		if (isCellEmpty(cell)) {
 			value = null;
 			System.out.println("Cell is blank");
@@ -241,6 +240,13 @@ public class OperationHelper {
 		}
 		return value;
 	}
+ 	
+ 	public String getData_FromTable(String[][] table, String row_index) throws Throwable {
+		int row_excel_index = Integer.parseInt(row_index);
+		int col_excel_index = Integer.parseInt(table[1][0]);
+ 		
+ 		return getValue_FromExcel(col_excel_index, row_excel_index);
+ 	}
 	
 	/**
 	 * This function is open page with url get from excel
@@ -255,11 +261,15 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public void openPage(String fileName, String sheetName, String[][] table, String row_index) throws Throwable {
-		String url = getValue_fromExcel(table, row_index);
+		String url = getData_FromTable(table, row_index);
 		driver.manage().window().maximize();
 		driver.get(url);
 //		String currentURL = driver.getCurrentUrl();
 		System.out.println(url); //print string url
+	}
+	
+	public void openPage(String url) {
+		driver.get(url);
 	}
 	
 	/**
@@ -273,8 +283,8 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public By getIdentifer(String[][] table) throws Throwable{
-		String eName = getValue_fromExcel(table, "1");
-		String eLocator = getValue_fromExcel(table, "2");
+		String eName = getData_FromTable(table, "1");
+		String eLocator = getData_FromTable(table, "2");
 		if (eName.contains("-id")) {
 			return By.id(eLocator);
 		} else if (eName.contains("-xp")) {
@@ -326,7 +336,7 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public void verifyElementWithText(String[][] table, String row_index) throws Throwable {
-		String eData = getValue_fromExcel(table, row_index);
+		String eData = getData_FromTable(table, row_index);
 		String eText = getElement(table).getText();
 		verifyElementDisplayed(table);
 		Assert.assertEquals(eData, eText);
@@ -334,7 +344,7 @@ public class OperationHelper {
 	
 	public void selectListElement(String[][] table) throws Throwable {
 		WebElement select = getElement(table);
-		String value = getValue_fromExcel(table, "3");
+		String value = getData_FromTable(table, "3");
 		List<WebElement> options = select.findElements(By.tagName("li"));
 		for(WebElement option1 : options) {
 			if(option1.getText().trim().contains(value)) {
@@ -348,4 +358,17 @@ public class OperationHelper {
 		WebDriverWait wait = new WebDriverWait(driver, timeOut);
 		wait.until(ExpectedConditions.elementToBeClickable(getIdentifer(table)));
 	}
+
+	public void selectDatePicker(String[][] table, String date) throws Throwable {
+		WebElement select = getElement(table);
+		daySelect = date;
+		List<WebElement> options = select.findElements(By.tagName("td"));
+		for(WebElement option1 : options) {
+			if(option1.getText().trim().equalsIgnoreCase(daySelect)) {
+				option1.click();
+				break;
+			}
+		}
+	}
+	
 }
