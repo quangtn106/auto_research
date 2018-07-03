@@ -16,6 +16,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OperationHelper {
@@ -156,6 +157,13 @@ public class OperationHelper {
 	 */
 	public String getText(String[][] table) throws Throwable {
 		String myText = getElement(table).getText();
+		System.out.println(myText);
+		return myText;
+	}
+	
+	public String getAttribute(String[][] table, String att) throws Throwable {
+		String myText = getElement(table).getAttribute(att);
+		System.out.println(myText);
 		return myText;
 	}
 	
@@ -371,4 +379,15 @@ public class OperationHelper {
 		}
 	}
 	
+	public void selectDropDown(String[][] table, String type, String value) throws Throwable {
+		WebElement e = getElement(table);
+		Select ddl = new Select(e);
+		if (type.equalsIgnoreCase("text")) {
+			ddl.selectByVisibleText(value);
+		} else if (type.equalsIgnoreCase("index")) {
+			ddl.selectByIndex(Integer.parseInt(value));
+		} else if (type.equalsIgnoreCase("value")) {
+			ddl.selectByValue(value);
+		}
+	}
 }

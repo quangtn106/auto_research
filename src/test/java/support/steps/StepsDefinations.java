@@ -1,5 +1,8 @@
 package support.steps;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import support.utils.OperationHelper;
 
 public class StepsDefinations {
@@ -7,6 +10,11 @@ public class StepsDefinations {
 	private static String dataRow = "";
 
 	public static void main(String[] args) throws Throwable {
+
+	}
+	
+	@Test
+	public void TC001() throws Throwable {
 		OperationHelper support = new OperationHelper();
 		support.openFileExcel("Elements.xlsx", "Flights_Search");
 		support.launch("chrome");
@@ -62,10 +70,49 @@ public class StepsDefinations {
 		support.selectDatePicker(table, "15");
 		
 		// When I choose travelers with "1" adult, "2" children, "1" age under 2
+		table = new String[][] { { "Col_Index" }, { "16" } };
+		support.click(table);
+		table = new String[][] { { "Col_Index" }, { "17" } };
+		support.waitForElementClickable(table, 20);
+		support.click(table);
+		support.click(table);
+		table = new String[][] { { "Col_Index" }, { "19" } };
+		support.waitForElementClickable(table, 20);
+		support.selectDropDown(table, "text", "10");
+		table = new String[][] { { "Col_Index" }, { "20" } };
+		support.selectDropDown(table, "text", "6");
+		table = new String[][] { { "Col_Index" }, { "18" } };
+		support.click(table);
+		table = new String[][] { { "Col_Index" }, { "21" } };
+		support.waitForElementClickable(table, 20);
+		support.selectDropDown(table, "text", "Under 1");
+		table = new String[][] { { "Col_Index" }, { "22" } };
+		support.click(table);
+			
 		// And I click on "Search" button
+		table = new String[][] { { "Col_Index" }, { "11" } };
+		support.click(table);
+		
 		// Then The webpage should display correct data
+		table = new String[][] { { "Col_Index" }, { "23" } };
+		support.waitForElementVisible(table, 20);
+		String actualDepartFlight = support.getAttribute(table, "value");
+		String expectedDepartFlight = support.getData_FromTable(table, "3");
+		Assert.assertEquals(expectedDepartFlight, actualDepartFlight);
+		table = new String[][] { { "Col_Index" }, { "24" } };
+		String actualReturnFlight = support.getAttribute(table, "value");
+		String expectedReturnFlight = support.getData_FromTable(table, "3");
+		Assert.assertEquals(expectedReturnFlight, actualReturnFlight);
+		table = new String[][] { { "Col_Index" }, { "25" } };
+		String actualDepartDay = support.getAttribute(table, "value");
+		String expectedDepartDay = support.getData_FromTable(table, "3");
+		Assert.assertEquals(expectedDepartDay, actualDepartDay);
+		table = new String[][] { { "Col_Index" }, { "26" } };
+		String actualReturnDay = support.getAttribute(table, "value");
+		String expectedReturnDay = support.getData_FromTable(table, "3");
+		Assert.assertEquals(expectedReturnDay, actualReturnDay);
+		
 		// Close page
-		Thread.sleep(2000); // just for test
 		support.closePage();
 	}
 }
