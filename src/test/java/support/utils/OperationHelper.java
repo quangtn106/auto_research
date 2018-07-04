@@ -72,40 +72,6 @@ public class OperationHelper {
 	public void closePage() {
 		driver.quit();
 	}
-
-	/**
-	 * This function is get elements
-	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
-	 * MODIFIED: 
-	 * 		+ ADD getElement() function 
-	 * UPDATED DATE: 6/18/2018 
-	 * @param eName
-	 * @param eLocator
-	 * @return element
-	 */
-	public WebElement getElement(String eName, String eLocator) {
-		WebElement e;
-		eName.toLowerCase();
-		boolean isWhitespace = eName.matches(".*\\s+.*");
-		if (isWhitespace == true) {
-			System.out.println("White space is not allowed");
-			return null;
-		} else {
-			if (eName.contains("-id")) {
-				e = driver.findElement(By.id(eLocator));
-			} else if (eName.contains("-name")) {
-				e = driver.findElement(By.name(eLocator));
-			} else if (eName.contains("-xp")) {
-				e = driver.findElement(By.xpath(eLocator));
-			} else if (eName.contains("-css")) {
-				e = driver.findElement(By.cssSelector(eLocator));
-			} else {
-				System.out.println("objectName is invalid");
-				return null;
-			}
-			return e;
-		}
-	}
 	
 	/**
 	 * This function is change sheet excel file
@@ -157,14 +123,22 @@ public class OperationHelper {
 	 */
 	public String getText(String[][] table) throws Throwable {
 		String myText = getElement(table).getText();
-		System.out.println(myText);
+		return myText;
+	}
+	
+	public String getText(String eName, String eLocator) {
+		String myText = getElement(eName, eLocator).getText();
 		return myText;
 	}
 	
 	public String getAttribute(String[][] table, String att) throws Throwable {
-		String myText = getElement(table).getAttribute(att);
-		System.out.println(myText);
-		return myText;
+		String myAtt = getElement(table).getAttribute(att);
+		return myAtt;
+	}
+	
+	public String getAttribute(String eName, String eLocator, String att) {
+		String myAtt = getElement(eName, eLocator).getAttribute(att);
+		return myAtt;
 	}
 	
 	/**
@@ -180,14 +154,57 @@ public class OperationHelper {
 		getElement(table).click();
 	}
 	
+	public void click(String eName, String eLocator) {
+		getElement(eName, eLocator).click();
+	}
+	
 	/**
 	 * 
 	 * @param table
 	 * @throws Throwable
 	 */
-	public void sendKey(String[][] table) throws Throwable {
-		String value = getData_FromTable(table, "3");
+	public void sendKey(String[][] table, String row_index) throws Throwable {
+		String value = getValue_FromDataTable(table, row_index);
 		getElement(table).sendKeys(value);
+	}
+	
+	public void sendKey(String eName, String eLocator, String value) {
+		WebElement e = getElement(eName, eLocator);
+		e.sendKeys(value);
+	}
+	
+	/**
+	 * This function is get elements
+	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
+	 * MODIFIED: 
+	 * 		+ ADD getElement() function 
+	 * UPDATED DATE: 6/18/2018 
+	 * @param eName
+	 * @param eLocator
+	 * @return element
+	 */
+	public WebElement getElement(String eName, String eLocator) {
+		WebElement e;
+		eName.toLowerCase();
+		boolean isWhitespace = eName.matches(".*\\s+.*");
+		if (isWhitespace == true) {
+			System.out.println("White space is not allowed");
+			return null;
+		} else {
+			if (eName.contains("-id")) {
+				e = driver.findElement(getIdentifer(eName, eLocator));
+			} else if (eName.contains("-name")) {
+				e = driver.findElement(getIdentifer(eName, eLocator));
+			} else if (eName.contains("-xp")) {
+				e = driver.findElement(getIdentifer(eName, eLocator));
+			} else if (eName.contains("-css")) {
+				e = driver.findElement(getIdentifer(eName, eLocator));
+			} else {
+				System.out.println("objectName is invalid");
+				return null;
+			}
+			return e;
+		}
 	}
 	
 	/**
@@ -201,8 +218,8 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public WebElement getElement(String[][] table) throws Throwable {
-		String eName = getData_FromTable(table, "1");
-		String eLocator = getData_FromTable(table, "2");
+		String eName = getValue_FromDataTable(table, "1");
+		String eLocator = getValue_FromDataTable(table, "2");
 		WebElement e = getElement(eName, eLocator);
 		return e;
 	}
@@ -249,11 +266,11 @@ public class OperationHelper {
 		return value;
 	}
  	
- 	public String getData_FromTable(String[][] table, String row_index) throws Throwable {
+ 	public String getValue_FromDataTable(String[][] table, String row_index) throws Throwable {
 		int row_excel_index = Integer.parseInt(row_index);
 		int col_excel_index = Integer.parseInt(table[1][0]);
- 		
- 		return getValue_FromExcel(col_excel_index, row_excel_index);
+ 		String data = getValue_FromExcel(col_excel_index, row_excel_index);
+ 		return data;
  	}
 	
 	/**
@@ -269,11 +286,10 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public void openPage(String fileName, String sheetName, String[][] table, String row_index) throws Throwable {
-		String url = getData_FromTable(table, row_index);
+		openFileExcel(fileName, sheetName);
+		String url = getValue_FromDataTable(table, row_index);
 		driver.manage().window().maximize();
 		driver.get(url);
-//		String currentURL = driver.getCurrentUrl();
-		System.out.println(url); //print string url
 	}
 	
 	public void openPage(String url) {
@@ -291,8 +307,20 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public By getIdentifer(String[][] table) throws Throwable{
-		String eName = getData_FromTable(table, "1");
-		String eLocator = getData_FromTable(table, "2");
+		String eName = getValue_FromDataTable(table, "1");
+		String eLocator = getValue_FromDataTable(table, "2");
+		if (eName.contains("-id")) {
+			return By.id(eLocator);
+		} else if (eName.contains("-xp")) {
+			return By.xpath(eLocator);
+		} else if (eName.contains("-name")){
+			return By.name(eLocator);
+		} else {
+			return null;
+		}
+	}
+	
+	public By getIdentifer(String eName, String eLocator) {
 		if (eName.contains("-id")) {
 			return By.id(eLocator);
 		} else if (eName.contains("-xp")) {
@@ -344,15 +372,22 @@ public class OperationHelper {
 	 * @throws Throwable
 	 */
 	public void verifyElementWithText(String[][] table, String row_index) throws Throwable {
-		String eData = getData_FromTable(table, row_index);
+		String eData = getValue_FromDataTable(table, row_index);
 		String eText = getElement(table).getText();
+		verifyElementDisplayed(table);
+		Assert.assertEquals(eData, eText);
+	}
+	
+	public void verifyElementWithAttribute(String[][] table, String row_index, String att) throws Throwable {
+		String eData = getValue_FromDataTable(table, row_index);
+		String eText = getAttribute(table, att);
 		verifyElementDisplayed(table);
 		Assert.assertEquals(eData, eText);
 	}
 	
 	public void selectListElement(String[][] table) throws Throwable {
 		WebElement select = getElement(table);
-		String value = getData_FromTable(table, "3");
+		String value = getValue_FromDataTable(table, "3");
 		List<WebElement> options = select.findElements(By.tagName("li"));
 		for(WebElement option1 : options) {
 			if(option1.getText().trim().contains(value)) {
