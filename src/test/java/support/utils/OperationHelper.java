@@ -425,4 +425,13 @@ public class OperationHelper {
 			ddl.selectByValue(value);
 		}
 	}
+
+	public void verifyDeparting(String[][]table, String month, String day, String year) {
+		
+	}
+	
+	public void verifyDeparting(String[][]table, String date) {
+		
+	}
+
 }
