@@ -12,9 +12,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -45,7 +47,9 @@ public class OperationHelper {
 		String driverPath = "\\src\\test\\references\\";
 		if (browser.equalsIgnoreCase("chrome")) {
 			System.setProperty("webdriver.chrome.driver", rootPath + driverPath + "chromedriver.exe");
-			driver = new ChromeDriver();
+			ChromeOptions options = new ChromeOptions();
+			options.setExperimentalOption("useAutomationExtension", false);
+			driver = new ChromeDriver(options);
 		} else if (browser.equalsIgnoreCase("ff")) {
 			System.setProperty("webdriver.gecko.driver", rootPath + driverPath + "geckodriver.exe");
 			driver = new FirefoxDriver();
@@ -55,9 +59,7 @@ public class OperationHelper {
 		} else if (browser.equalsIgnoreCase("ie")) {
 			System.setProperty("webdriver.ie.driver", rootPath + driverPath + "IEDriverServer_win_x64.exe");
 			driver = new InternetExplorerDriver();
-		}
-
-		else {
+		} else {
 			System.out.println("Browser is invalid");
 		}
 	}
@@ -168,6 +170,19 @@ public class OperationHelper {
 		getElement(table).sendKeys(value);
 	}
 	
+	public void sendKey_WithValue1(String[][] table, String value) throws Throwable {
+		getElement(table).sendKeys(value);
+	}
+	
+	public void sendKey_WithValue(String[][] table, String value) throws Throwable {
+		Actions actions = new Actions(driver);
+		WebElement element = getElement(table);
+		actions.moveToElement(element);
+		actions.click();
+		actions.sendKeys(value);
+		actions.build().perform();
+	}
+		
 	public void sendKey(String eName, String eLocator, String value) {
 		WebElement e = getElement(eName, eLocator);
 		e.sendKeys(value);
@@ -223,7 +238,7 @@ public class OperationHelper {
 		WebElement e = getElement(eName, eLocator);
 		return e;
 	}
-	
+		
 	/**
 	 * This function is open file excel with filename and sheetname as parameter
 	 * AUTHOR: TRAN NGOC QUANG - SU 3 - GROUP 2 
@@ -426,12 +441,11 @@ public class OperationHelper {
 		}
 	}
 
-	public void verifyDeparting(String[][]table, String month, String day, String year) {
-		
-	}
-	
-	public void verifyDeparting(String[][]table, String date) {
-		
+	public void uploadImage(String[][] table, String iName) throws Throwable {
+		String rootPath = System.getProperty("user.dir");
+		filePath = "\\src\\test\\resources\\DataIn\\";
+		String fileDir = rootPath + filePath + iName;
+		sendKey_WithValue1(table, fileDir);
 	}
 
 }
