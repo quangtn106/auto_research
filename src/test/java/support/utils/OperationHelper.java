@@ -1,7 +1,17 @@
 package support.utils;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.imageio.ImageIO;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import org.openqa.selenium.Point;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -9,6 +19,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,6 +33,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.sikuli.script.Pattern;
+import org.sikuli.script.Screen;
 
 public class OperationHelper {
 	private WebDriver driver = null;
@@ -31,7 +46,6 @@ public class OperationHelper {
 	private Sheet sheet;
 	private Row row;
 	private Cell cell;
-	private String daySelect = "";
 		
 	// ================QuangTN=================
 	/**
@@ -62,6 +76,10 @@ public class OperationHelper {
 		} else {
 			System.out.println("Browser is invalid");
 		}
+	}
+	
+	public void max() {
+		driver.manage().window().maximize();
 	}
 	
 	/**
@@ -400,13 +418,13 @@ public class OperationHelper {
 		Assert.assertEquals(eData, eText);
 	}
 	
-	public void selectListElement(String[][] table) throws Throwable {
+	public void selectListElement(String[][] table, String value, String tagName) throws Throwable {
 		WebElement select = getElement(table);
-		String value = getValue_FromDataTable(table, "3");
-		List<WebElement> options = select.findElements(By.tagName("li"));
-		for(WebElement option1 : options) {
-			if(option1.getText().trim().contains(value)) {
-				option1.click();
+		value.trim().toLowerCase();
+		List<WebElement> options = select.findElements(By.tagName(tagName));
+		for(WebElement option : options) {
+			if(option.getText().trim().toLowerCase().contains(value)) {
+				option.click();
 				break;
 			}
 		}
@@ -417,18 +435,6 @@ public class OperationHelper {
 		wait.until(ExpectedConditions.elementToBeClickable(getIdentifer(table)));
 	}
 
-	public void selectDatePicker(String[][] table, String date) throws Throwable {
-		WebElement select = getElement(table);
-		daySelect = date;
-		List<WebElement> options = select.findElements(By.tagName("td"));
-		for(WebElement option1 : options) {
-			if(option1.getText().trim().equalsIgnoreCase(daySelect)) {
-				option1.click();
-				break;
-			}
-		}
-	}
-	
 	public void selectDropDown(String[][] table, String type, String value) throws Throwable {
 		WebElement e = getElement(table);
 		Select ddl = new Select(e);
@@ -446,6 +452,55 @@ public class OperationHelper {
 		filePath = "\\src\\test\\resources\\DataIn\\";
 		String fileDir = rootPath + filePath + iName;
 		sendKey_WithValue1(table, fileDir);
+	}
+	
+	public void takeScrShot_OfElement(String eName, String eLocator, String fileName) throws IOException {
+		String rootPath = System.getProperty("user.dir");
+		String filePath = rootPath + "\\src\\test\\resources\\DataIn\\img\\";
+		
+		WebElement e = getElement(eName, eLocator);
+		
+		// Get entire page screenshot
+		TakesScreenshot scrShot = (TakesScreenshot)driver;
+		File srcFile = scrShot.getScreenshotAs(OutputType.FILE);
+		BufferedImage fullImg = ImageIO.read(srcFile);
+		// Get the location of element on the page
+		Point point = e.getLocation();
+		// Get width and height of the element
+		int eWidth = e.getSize().getWidth();
+		int eHeigh = e.getSize().getHeight();
+		// Crop the entire page screenshot to get only element screenshot
+		BufferedImage eScrShot = fullImg.getSubimage(point.getX(), point.getY(), eWidth, eHeigh);
+		ImageIO.write(eScrShot, "png", srcFile);
+		// Copy the element screenshot to disk
+		File destFile = new File(filePath + fileName);
+		FileUtils.copyFile(srcFile, destFile);
+	}
+	
+	public void takeScrShot_OfPage(String fileName) throws IOException {
+		String rootPath = System.getProperty("user.dir");
+		String filePath = rootPath + "\\src\\test\\resources\\DataIn\\img\\";
+		TakesScreenshot scrShot = (TakesScreenshot)driver;
+		File srcFile = scrShot.getScreenshotAs(OutputType.FILE);
+		File destFile = new File(filePath + fileName);
+		FileUtils.copyFile(srcFile,destFile);
+	}
+	
+	public void uploadSikuli(String fileName) throws Throwable {
+		String rootPath = System.getProperty("user.dir");
+		String filePath = rootPath + "\\src\\test\\resources\\DataIn\\img\\";
+		String inputFilePath = rootPath + "\\src\\test\\resources\\DataIn\\img\\" + fileName;
+		Screen s = new Screen();
+		Pattern fileInputName = new Pattern(filePath + "fileInputName.PNG");
+		Pattern openButton = new Pattern(filePath + "openButton.PNG");
+		s.wait(fileInputName, 20);
+		s.type(fileInputName, inputFilePath);
+		s.click(openButton);
+	}
+	
+	public Cookie getCookies() {
+		driver.manage().getCookies();
+		return null;
 	}
 
 }
