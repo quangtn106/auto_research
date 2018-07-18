@@ -1,14 +1,23 @@
 package support.utils;
 
 import java.util.List;
-import java.util.Set;
-
 import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
 import org.openqa.selenium.Point;
 
 import org.apache.commons.io.FileUtils;
@@ -502,5 +511,90 @@ public class OperationHelper {
 		driver.manage().getCookies();
 		return null;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
+	public void getCookie() throws IOException {
+		CookieManager cookieManager = new CookieManager();
+		CookieHandler.setDefault(cookieManager);
+
+		String urlParameters = "j_username=qateam&j_password=Lindy%20allegro&j_validate=true&_charset_=utf-8";
+
+		byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
+		int postDataLength = postData.length;
+		String request = "http://author.dev.genesis.monkapps.com:4502/libs/granite/core/content/login.html/j_security_check";
+		URL url = new URL(request);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setDoOutput(true);
+		conn.setInstanceFollowRedirects(false);
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("charset", "utf-8");
+		conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+		conn.setUseCaches(false);
+		try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+			wr.write(postData);
+		}
+		System.err.println(conn.getContent());
+
+		List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+		for (HttpCookie cookie : cookies) {
+			System.out.println(cookie.getDomain());
+			System.out.println(cookie);
+		}
+
+		System.out.println(conn.getResponseMessage());
+		System.out.println(conn.getResponseCode());
+		UpdateURL("");
+	}
+
+	public void UpdateURL(String url) throws IOException {
+		try {
+			URL url111 = new URL(
+					"http://author.dev.genesis.monkapps.com:4502/content/genesis/us/en/QA-testing/Testspr1.html?wcmmode=disabled");
+			HttpURLConnection hConnection = (HttpURLConnection) url111.openConnection();
+			HttpURLConnection.setFollowRedirects(true);
+
+			hConnection.setDoOutput(true);
+			hConnection.setRequestMethod("GET");
+
+			// PrintStream ps = new PrintStream(hConnection.getOutputStream());
+			// ps.print("username='123'&amp;password='555'");
+			// ps.close();
+
+			hConnection.connect();
+			System.err.println("debug: " + hConnection.getResponseCode());
+
+			if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
+				InputStream is = hConnection.getInputStream();
+				OutputStream os = new FileOutputStream("output.html");
+				int data;
+				while ((data = is.read()) != -1) {
+					os.write(data);
+				}
+				is.close();
+				os.close();
+				hConnection.disconnect();
+
+				System.err.println("debug: " + hConnection.getResponseCode());
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		//System.err.println("debug: ");
+
+	}
 }

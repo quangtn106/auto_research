@@ -10,14 +10,10 @@ public class StepsDefinations {
 
 	public static void main(String[] args) throws Throwable {
 		OperationHelper support = new OperationHelper();
-		support.launch("chrome");
-		support.max();
-		support.openPage("https://www.google.com");
-		support.takeScrShot_OfElement("logo-id", "hplogo", "element_scr_test.png");
-		support.takeScrShot_OfPage("google_page.png");
+		support.getCookie();
 		
-		Thread.sleep(3000);
-		support.closePage();
+//		Thread.sleep(3000);
+//		support.closePage();
 	}
 
 	public void TC001() throws Throwable {
