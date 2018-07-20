@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.OutputType;
@@ -44,6 +43,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.sikuli.script.Pattern;
 import org.sikuli.script.Screen;
+import org.testng.Assert;
 
 public class OperationHelper {
 	private WebDriver driver = null;
